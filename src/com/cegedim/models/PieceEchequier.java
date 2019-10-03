@@ -42,4 +42,11 @@ public class PieceEchequier {
 		this.position = position;
 	}
 
+	public boolean siMangeable(PieceEchequier piece) {
+		if(this.getCouleur() != piece.getCouleur()) return true;
+		else return false;
+	}
+	
+	
+
 }
