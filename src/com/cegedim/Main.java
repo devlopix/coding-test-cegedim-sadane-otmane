@@ -20,10 +20,11 @@ public class Main {
 		char[] lignes = { '1', '2', '3', '4', '5', '6', '7', '8' };
 
 		// Initialiser les position des pieces
-		
+
 		initEchequier();
-		
-		
+		PositionPieceEchequier positionTourBlanche = new PositionPieceEchequier('d', '5');
+		System.out.println(
+				echequier.listerLesCoupsPossibleDeLaTour(echequier.getPiecesEnJeux().get(positionTourBlanche)));
 
 	}
 
@@ -42,13 +43,15 @@ public class Main {
 
 		// chevaux blancs
 
-		PositionPieceEchequier positionChevalBlanc1 = new PositionPieceEchequier('d', '5');
+		PositionPieceEchequier positionChevalBlanc1 = new PositionPieceEchequier('d', '2');
 		PieceEchequier chevalBlanc1 = new PieceEchequier("Cheval", Couleur.Blanc, positionChevalBlanc1);
 		piecesEnJeux.put(positionChevalBlanc1, chevalBlanc1);
 
-		PositionPieceEchequier positionChevalBlanc2 = new PositionPieceEchequier('d', '5');
+		PositionPieceEchequier positionChevalBlanc2 = new PositionPieceEchequier('g', '5');
 		PieceEchequier chevalBlanc2 = new PieceEchequier("Cheval", Couleur.Blanc, positionChevalBlanc2);
 		piecesEnJeux.put(positionChevalBlanc2, chevalBlanc2);
+
+		echequier.setPiecesEnJeux(piecesEnJeux);
 
 	}
 

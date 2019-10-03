@@ -34,18 +34,18 @@ public class Echequier {
 		this.cimtierePiecesNoires = cimtierePiecesNoires;
 	}
 
-	public char allerADroite(char col) {
-		return Character.toString((char) (col + 1)).charAt(0);
+	public char avancer(char init, int pas) {
+		return Character.toString((char) (init + pas)).charAt(0);
 	}
 
-	public char allerAGauche(char col) {
-		return Character.toString((char) (col - 1)).charAt(0);
+	public char revenir(char init, int pas) {
+		return Character.toString((char) (init - pas)).charAt(0);
 	}
 
 	/*
 	 * Calculer les différents coups possibles
 	 */
-	public String listerLesCoupsPossible(PieceEchequier piece) {
+	public String listerLesCoupsPossibleDeLaTour(PieceEchequier piece) {
 		StringBuilder builder = new StringBuilder();
 		boolean encore = true;
 		if (piece == null) {
@@ -53,16 +53,155 @@ public class Echequier {
 		} else {
 			char col = piece.getPosition().getColone();
 			char ligne = piece.getPosition().getLigne();
+
+			/*
+			 * Exploration vers le bas ( comme dans l'exemple fournie avec l'enoncé)
+			 */
+			/*
+			 * 
+			 */
+			int profondeurRecherche = 1;
 			do {
-// commencer exploration vers le bas jusq
+
+				char prochainePositionPossibleLigne = revenir(ligne, profondeurRecherche);
+				// Est ce possible de bouger vers le bas ? (on sort pas de l'echeqier)
+				if (siPossibleDeBougerVerticalement(prochainePositionPossibleLigne)) {
+// Est ce la prochaine case contient quelque chose de mangeable
+					PositionPieceEchequier positionPieceEnBas = new PositionPieceEchequier(col,
+							prochainePositionPossibleLigne);
+					PieceEchequier pieceSetrouvantEnBas = this.getPiecesEnJeux().get(positionPieceEnBas);
+
+					if (pieceSetrouvantEnBas == null) { // si pieceSetrouvantEnBas est null -> c'est une case vide
+						builder.append("T" + col + ligne + "-" + col + prochainePositionPossibleLigne + "\n");
+
+					} else { // si pieceSetrouvantEnBas n'est pas null c'est possible qu'elle soit mangeable
+						if (piece.siMangeable(pieceSetrouvantEnBas)) {
+							builder.append("T" + col + ligne + "x" + col + prochainePositionPossibleLigne + "\n");
+						}
+						encore = false;
+					}
+
+					// On est arrivé à la dérnière ligne possible
+					if (prochainePositionPossibleLigne == '1') {
+						encore = false;
+					}
+
+				}
+
+				profondeurRecherche++;
 
 			} while (encore);
+
+			profondeurRecherche = 1;
+			encore = true;
+//			/*
+//			 * Exploration à droite
+//			 */
+
+			do {
+
+				char prochainePositionPossibleColone = avancer(col, profondeurRecherche);
+				// Est ce possible de bouger vers le bas ? (on sort pas de l'echeqier)
+				if (siPossibleDeBougerHorizontalement(prochainePositionPossibleColone)) {
+// Est ce la prochaine case contient quelque chose de mangeable
+					PositionPieceEchequier positionPieceADroite = new PositionPieceEchequier(
+							prochainePositionPossibleColone, ligne);
+					PieceEchequier pieceSetrouvantADroite = this.getPiecesEnJeux().get(positionPieceADroite);
+
+					if (pieceSetrouvantADroite == null) { // si pieceSetrouvantEnBas est null -> c'est une case vide
+						builder.append("T" + col + ligne + "-" + prochainePositionPossibleColone + ligne + "\n");
+
+					} else { // si pieceSetrouvantEnBas n'est pas null c'est possible qu'elle soit mangeable
+						if (piece.siMangeable(pieceSetrouvantADroite)) {
+							builder.append("T" + col + ligne + "x" + col + prochainePositionPossibleColone + "\n");
+						}
+						encore = false;
+					}
+
+					// On est arrivé à la dérnière colone possible
+					if (prochainePositionPossibleColone == 'h') {
+						encore = false;
+					}
+
+				}
+				profondeurRecherche++;
+			} while (encore);
+
+			/*
+			 * Exploration vers le haut
+			 */
+			profondeurRecherche = 1;
+			encore = true;
+			do {
+
+				char prochainePositionPossibleLigne = avancer(ligne, profondeurRecherche);
+				// Est ce possible de bouger vers le bas ? (on sort pas de l'echeqier)
+				if (siPossibleDeBougerVerticalement(prochainePositionPossibleLigne)) {
+// Est ce la prochaine case contient quelque chose de mangeable
+					PositionPieceEchequier positionPieceEnHaut = new PositionPieceEchequier(col,
+							prochainePositionPossibleLigne);
+					PieceEchequier pieceSetrouvantEnHaut = this.getPiecesEnJeux().get(positionPieceEnHaut);
+
+					if (pieceSetrouvantEnHaut == null) { // si pieceSetrouvantEnBas est null -> c'est une case vide
+						builder.append("T" + col + ligne + "-" + col + prochainePositionPossibleLigne + "\n");
+					} else { // si pieceSetrouvantEnBas n'est pas null c'est possible qu'elle soit mangeable
+						if (piece.siMangeable(pieceSetrouvantEnHaut)) {
+							builder.append("T" + col + ligne + "x" + col + prochainePositionPossibleLigne + "\n");
+						}
+						encore = false;
+					}
+
+					// On est arrivé à la dérnière ligne possible
+					if (prochainePositionPossibleLigne == '8') {
+						encore = false;
+					}
+
+				}
+				profondeurRecherche++;
+			} while (encore);
+
+			/*
+			 * Exploration à gauche
+			 */
+
+			profondeurRecherche = 1;
+			encore = true;
+			do {
+
+				char prochainePositionPossibleColone = revenir(col, profondeurRecherche);
+				// Est ce possible de bouger vers le bas ? (on sort pas de l'echeqier)
+				if (siPossibleDeBougerHorizontalement(prochainePositionPossibleColone)) {
+					// Est ce la prochaine case contient quelque chose de mangeable
+					PositionPieceEchequier positionPieceAGauche = new PositionPieceEchequier(
+							prochainePositionPossibleColone, ligne);
+					PieceEchequier pieceSetrouvantAGauche = this.getPiecesEnJeux().get(positionPieceAGauche);
+
+					if (pieceSetrouvantAGauche == null) { // si pieceSetrouvantEnBas est null -> c'est une case vide
+						builder.append("T" + col + ligne + "-" + prochainePositionPossibleColone + ligne + "\n");
+					} else { // si pieceSetrouvantEnBas n'est pas null c'est possible qu'elle soit mangeable
+						if (piece.siMangeable(pieceSetrouvantAGauche)) {
+							builder.append("T" + col + ligne + "x" + col + prochainePositionPossibleColone + "\n");
+						}
+						encore = false;
+					}
+
+					// On est arrivé à la dérnière colone possible
+					if (prochainePositionPossibleColone == 'a') {
+						encore = false;
+					}
+
+				}
+				profondeurRecherche++;
+			} while (encore);
+
 		}
+
 		return builder.toString();
 
 	}
 
 	public boolean siPossibleDeBougerHorizontalement(char coordonnee) {
+
 		if ((coordonnee > 'h') || (coordonnee < 'a'))
 			return false;
 		else
@@ -71,6 +210,7 @@ public class Echequier {
 	}
 
 	public boolean siPossibleDeBougerVerticalement(char coordonnee) {
+
 		if ((coordonnee > '8') || (coordonnee < '1'))
 			return false;
 		else
